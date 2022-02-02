@@ -1,0 +1,20 @@
+{
+    "fields": [
+        {
+            "name": "timestamp",
+            "type": "TIMESTAMP"
+        },
+        {
+            "name": "origin",
+            "type": "STRING"
+        },
+        {
+            "name": "destination",
+            "type": "STRING"
+        },
+        {
+            "name": "transaction_ammount",
+            "type": "INTEGER"
+        }
+    ]
+}

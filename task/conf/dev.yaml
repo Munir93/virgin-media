@@ -1,0 +1,4 @@
+gcs_file: gs://cloud-samples-data/bigquery/sample-transactions/transactions.csv
+schema_file: /schemas/schema.json
+outfile: output/results
+suffix: .txt.gz
