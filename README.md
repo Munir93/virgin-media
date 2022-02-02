@@ -6,7 +6,7 @@ This pipeline reads data from a public GCS bucket and emits 2 outfiles named `re
 
 ### Considerations 
 The following changes have been made to the project requirement
-- I decided to group the data by year e.g 2018 rather than date e.g 2019-01-10. This was due to there only being 6 rows in the input data and none with the same date satisfying all the conditions (`transaction_amount` greater than `20` and transactions made before the year `2010`) so the results would not have demonstrated a group by and sum. 
+- I decided to group the data by year e.g 2018 rather than date e.g 2019-01-10. This was due to there only being 6 rows in the input data and none with the same date satisfying all the conditions (`transaction_amount` greater than `20` and no transactions made before the year `2010`) so the results would not have demonstrated a group by and sum. 
 - the task specified that output be in the format 
 date, total_amount
 2011-01-01, 12345.00
@@ -24,6 +24,10 @@ Install requirements
 run pipeline
 `python main.py --config-file=/conf/dev.yaml`
 
+### Testing 
+In the interest of time I only included minimal testing with a static test case
+to run 
+`python -m unittest task/pipeline_test.py`
 
 
 
