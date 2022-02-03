@@ -21,7 +21,7 @@ root_path = os.path.dirname(os.path.abspath(__file__))
 def run(argv=None):
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('--config-file', dest="config_file", required=True)
+    parser.add_argument("--config-file", dest="config_file", required=True)
 
     known_args, pipeline_args = parser.parse_known_args(argv)
     pipeline_options = PipelineOptions(pipeline_args)
@@ -32,29 +32,34 @@ def run(argv=None):
 
     schema = config["schema_file"]
     gcs_file = config["gcs_file"]
-    outfile = config['outfile']
-    suffix = config['suffix']
-    COMPOSITE = 'comp'
+    outfile = config["outfile"]
+    suffix = config["suffix"]
+    header = config["header"]
+    COMPOSITE = "comp"
 
     p = beam.Pipeline(options=pipeline_options)
 
-    input_data = (
-        p | "Read from GCS" >> beam.io.ReadFromText(
-            gcs_file, skip_header_lines=1))
+    input_data = p | "Read from GCS" >> beam.io.ReadFromText(
+        gcs_file, skip_header_lines=1
+    )
 
-    output = (input_data
-              | "Map elements" >> beam.ParDo(MapElements(schema))
-              | "Filter trans" >> beam.Filter(filter_transactions)
-              | "Filter date" >> beam.Filter(filter_date)
-              | "KV pairs" >> beam.Map(create_kv)
-              | "Sum By Year" >> beam.CombinePerKey(sum)
-              | "Write to local" >> beam.io.WriteToText(outfile, suffix)
-              )
+    output = (
+        input_data
+        | "Map elements" >> beam.ParDo(MapElements(schema))
+        | "Filter trans" >> beam.Filter(filter_transactions)
+        | "Filter date" >> beam.Filter(filter_date)
+        | "KV pairs" >> beam.Map(create_kv)
+        | "Sum By Year" >> beam.CombinePerKey(sum)
+        | "Format" >> beam.MapTuple(lambda x, y: "{},{}".format(x, y))
+        | "Write to local" >> beam.io.WriteToText(outfile, suffix, header=header)
+    )
 
     composite_output = (
         input_data
         | "Composite Transform" >> CompositeTransform(schema)
-        | "Write to local2" >> beam.io.WriteToText(outfile+COMPOSITE, suffix)
+        | "Formatcomp" >> beam.MapTuple(lambda x, y: "{},{}".format(x, y))
+        | "Write to localcomp"
+        >> beam.io.WriteToText(outfile + COMPOSITE, suffix, header=header)
     )
 
     execute = p.run()

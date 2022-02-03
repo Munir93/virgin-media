@@ -12,6 +12,8 @@ date, total_amount
 2011-01-01, 12345.00
 however the file was to named `output/results.json.gz`. I therefore changed the outfile name to `output/results.txt.gz` to follow the desired output format. 
 
+Also the wording of the task suggested to split each processing step into a distinct transformation.
+
 ### Execution
 
 #### Local (Direct Runner)
